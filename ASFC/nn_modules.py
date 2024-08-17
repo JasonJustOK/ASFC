@@ -153,7 +153,7 @@ class MultiHeadAttention(nn.Module):
         # context: [batch_size x num_heads x num_agents x output_dim]
         with autocast(enabled=False):
             scores = torch.matmul(q_s.float(), k_s.float().transpose(-1, -2)) / (self.output_dim**0.5) # scores : [batch_size x n_heads x num_agents x num_agents]
-            scores.masked_fill_(attn_mask == 0, -1e9) # Fills elements of self tensor with value where mask is one. 这里等于0才无效
+            scores.masked_fill_(attn_mask == 0, -1e9) # Fills elements of self tensor with value where mask is one.
             attn = F.softmax(scores, dim=-1)
         context = torch.matmul(attn, v_s)
         context = context.transpose(1, 2).contiguous().view(batch_size, num_agents, self.num_heads*self.output_dim) # context: [batch_size x len_q x n_heads * d_v]
@@ -166,7 +166,7 @@ class MultiHeadAttention(nn.Module):
 class Aux_Decoder(nn.Module):
     def __init__(self):
         super().__init__()
-        self.fc = nn.Linear(192 + 2, 784) # 注意这里是加了动作维度2
+        self.fc = nn.Linear(192 + 2, 784) 
         self.dconv1 = nn.ConvTranspose2d(16, 64, kernel_size=3, stride=1)
         self.dconv2 = nn.ConvTranspose2d(64, 32, kernel_size=3, stride=1)
         self.dconv3 = nn.ConvTranspose2d(32, 4, kernel_size=3, stride=3)
